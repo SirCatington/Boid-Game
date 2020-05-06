@@ -46,6 +46,17 @@ public class FlockAgent : MonoBehaviour
     //    KillSelf();
     //}
 
+    public void AttractTo(Vector2 attractionPoint, float attractionForce, float radius)
+    {        
+        Vector2 attractionOffset = attractionPoint - (Vector2)transform.position;
+        float t = attractionOffset.magnitude / radius;
+        Vector2 attractionMove = attractionOffset / (t * t * t);
+        attractionMove.Normalize();
+        attractionMove *= attractionForce;
+        Move(attractionMove, 1);
+
+    }
+
     public void KillSelf()
     {
         if(flockLeader == this)
