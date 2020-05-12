@@ -50,10 +50,10 @@ public class FlockAgent : MonoBehaviour
     {        
         Vector2 attractionOffset = attractionPoint - (Vector2)transform.position;
         float t = attractionOffset.magnitude / radius;
-        Vector2 attractionMove = attractionOffset / (t * t * t);
+        Vector2 attractionMove = attractionOffset / (t * t);
         attractionMove.Normalize();
         attractionMove *= attractionForce;
-        Move(attractionMove, 1);
+        transform.position += (Vector3)attractionMove * Time.deltaTime;
 
     }
 

@@ -37,7 +37,7 @@ public class BlackHole : MonoBehaviour
             if (c.tag == "Boid")
             {
                 FlockAgent targetAgent = c.gameObject.GetComponent<FlockAgent>();
-                targetAgent.AttractTo((Vector2) transform.position, attractionForce, attractionRadius);                    
+                targetAgent.AttractTo(transform.position, attractionForce, attractionRadius);                    
             }            
         }        
     }
