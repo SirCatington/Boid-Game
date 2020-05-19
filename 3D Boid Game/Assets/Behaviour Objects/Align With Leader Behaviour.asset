@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Align With Leader Behaviour
   m_EditorClassIdentifier: 
   filter: {fileID: 0}
+  radius: 3

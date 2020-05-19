@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DarknessLigh : MonoBehaviour
+public class FlockLeader : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.GetComponent<Light>().color = new Color(-1f, -1f, -1f);
+        
     }
 
-    
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

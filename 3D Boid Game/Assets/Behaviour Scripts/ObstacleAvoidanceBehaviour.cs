@@ -7,8 +7,7 @@ public class ObstacleAvoidanceBehaviour : FilteredFlockBehaviour
 {
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
-        if (true)//(agent.flockLeader == null)
-        {
+        
             Vector2 avoidanceMove = Vector2.zero;
             RaycastHit2D hit = Physics2D.Raycast(agent.transform.position, agent.transform.up, flock.neighborRadius, LayerMask.GetMask("Obstacles"));
             //Debug.DrawRay(agent.transform.position, agent.transform.up, Color.green, 0.01f);
@@ -36,7 +35,7 @@ public class ObstacleAvoidanceBehaviour : FilteredFlockBehaviour
                     angle += 20;
                 }
             }
-        }
+        
         return Vector2.zero;
     }
 }

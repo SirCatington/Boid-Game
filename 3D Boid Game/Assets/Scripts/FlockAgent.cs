@@ -12,7 +12,9 @@ public class FlockAgent : MonoBehaviour
     public Collider2D AgentCollider { get { return agentCollider; } }
 
     public FlockAgent flockLeader;
-
+    public bool isPlayer;
+    public int flockId;
+    public string type;
 
     // Start is called before the first frame update
     void Start()
@@ -20,9 +22,12 @@ public class FlockAgent : MonoBehaviour
         agentCollider = GetComponent<Collider2D>();
     }
 
-    public void Initialize(Flock flock)
+    public void Initialize(Flock flock, bool isPlayerInput, int id, string agentType)
     {
         agentFlock = flock;
+        isPlayer = isPlayerInput;
+        flockId = id;
+        type = agentType;
     }
 
     public void Move(Vector2 velocity, int nearbyBoids)
@@ -64,6 +69,11 @@ public class FlockAgent : MonoBehaviour
             agentFlock.ChooseSuccessor(this);
         }
         agentFlock.RemoveBoid(this);
+        Destroy(gameObject);
+    }
+
+    private void OnDisable()
+    {
         Destroy(gameObject);
     }
 }

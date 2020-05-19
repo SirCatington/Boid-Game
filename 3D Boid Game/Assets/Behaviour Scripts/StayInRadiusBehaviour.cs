@@ -16,7 +16,11 @@ public class StayInRadiusBehaviour : FilteredFlockBehaviour
         {
             return Vector2.zero;
         }
-
-        return centerOffset * t * t * t;
+        if (agent.flockLeader != null)
+        {
+            t *= 10;
+        }
+        
+        return centerOffset * t * t;
     }
 }

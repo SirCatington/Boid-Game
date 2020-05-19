@@ -8,6 +8,8 @@ public class CompositeBehaviour : FlockBehaviour
     public FlockBehaviour[] behaviors;
     public float[] weights;
 
+    
+
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
         //handle data mismatch

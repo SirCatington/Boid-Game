@@ -5,7 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Flock/Behaviour/Follow Leader")]
 public class FollowLeaderBehaviour : FilteredFlockBehaviour
 {
-    public float radius = 5; 
+    public float radius = 5;
+
+    
+
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
         if (agent.flockLeader != null)
@@ -15,6 +18,7 @@ public class FollowLeaderBehaviour : FilteredFlockBehaviour
             if (t > 2f)
             {
                 agent.flockLeader = null;
+                agent.flockId = 0;
                 return Vector2.zero;
             }
             else if (t < 1f)
