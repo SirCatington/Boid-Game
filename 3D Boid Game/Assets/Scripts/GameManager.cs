@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public Text playButtonText;
     public Text verdictText;
     public Text boidNumberText;
+    public Text gameNameText;
 
     public enum GameState   
     {
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
        
         playButton.gameObject.SetActive(true);
+        gameNameText.gameObject.SetActive(true);
         playButtonText.text = "Play";
         planets.SetActive(false);
         flock.gameObject.SetActive(false);
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour
                 {
                     gameState = GameState.GameOver;
 
+                    gameNameText.gameObject.SetActive(true);
                     playButton.gameObject.SetActive(true);
                     planets.SetActive(false);
                     flock.gameObject.SetActive(false);
@@ -64,7 +67,7 @@ public class GameManager : MonoBehaviour
                 else if (!flock.playerAlive())
                 {
                     gameState = GameState.GameOver;
-
+                    gameNameText.gameObject.SetActive(true);
                     playButton.gameObject.SetActive(true);
                     planets.SetActive(false);
                     flock.gameObject.SetActive(false);
@@ -82,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlay()
     {
+        gameNameText.gameObject.SetActive(false);
         planets.SetActive(true);
         flock.gameObject.SetActive(true);
         target.SetActive(true);

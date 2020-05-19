@@ -10,6 +10,7 @@ public class FollowMouseCircle : MonoBehaviour
 
     public float h = 25;
     public float gravity = -18;
+    public float strength;
     
 
     // Start is called before the first frame update
@@ -37,7 +38,7 @@ public class FollowMouseCircle : MonoBehaviour
             foreach (FlockAgent agent in agents)
             {
                 Grenade grenade = Instantiate(grenadePrefab, agent.transform.position + Vector3.forward, Quaternion.identity);
-                grenade.strength = 2;
+                grenade.strength = strength;
                 Physics.gravity = Vector3.forward * gravity;
                 Rigidbody rigidbody = grenade.GetComponent<Rigidbody>();
                 rigidbody.velocity = CalculateLaunchData(rigidbody.position, pz).initialVelocity;
@@ -49,7 +50,7 @@ public class FollowMouseCircle : MonoBehaviour
             foreach (FlockAgent agent in agents)
             {
                 Grenade grenade = Instantiate(grenadePrefab, agent.transform.position + Vector3.forward, Quaternion.identity);
-                grenade.strength = -2;
+                grenade.strength = -strength;
                 Physics.gravity = Vector3.forward * gravity;
                 Rigidbody rigidbody = grenade.GetComponent<Rigidbody>();
                 rigidbody.velocity = CalculateLaunchData(rigidbody.position, pz).initialVelocity;

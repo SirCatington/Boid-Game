@@ -7,7 +7,7 @@ public class Grenade : MonoBehaviour
 {
     Transform transform;
     public GrenadeExplosion explosionPrefab;
-    public int strength;
+    public float strength;
 
     private void Start()
     {

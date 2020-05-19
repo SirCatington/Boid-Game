@@ -28,7 +28,9 @@ public class GrenadeExplosion : MonoBehaviour
         if (decay < 1)
         {
             decay += decayRate * Time.deltaTime;
-            SetFromStrength((int)(startingStrength * (1 - decay)));
+            attractionRadius = Mathf.Abs(startingStrength) * 3 * (1 - decay);
+            attractionForce = startingStrength * (1 - decay);
+            transform.localScale = Vector3.one * Mathf.Abs(startingStrength) * (1 - decay);
         }
         else
         {
