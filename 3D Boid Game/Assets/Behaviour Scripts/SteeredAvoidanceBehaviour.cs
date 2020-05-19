@@ -30,7 +30,7 @@ public class SteeredAvoidanceBehaviour : FilteredFlockBehaviour
 
         avoidanceMove = Vector2.SmoothDamp(agent.transform.position, avoidanceMove, ref currentVelocity, agentSmoothTime);
 
-
+        
 
         return avoidanceMove;
     }

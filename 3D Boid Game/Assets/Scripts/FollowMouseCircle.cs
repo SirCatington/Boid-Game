@@ -5,17 +5,21 @@ using UnityEngine;
 public class FollowMouseCircle : MonoBehaviour
 {
     Transform transform;
+    SpriteRenderer spriteRenderer;
+
     public Flock flock;
     public Grenade grenadePrefab;
 
     public float h = 25;
     public float gravity = -18;
+    float strengthMultiplier = 1;
     
 
     // Start is called before the first frame update
     void Start()
     {
-        transform = gameObject.GetComponent<Transform>();
+        transform = GetComponent<Transform>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -25,36 +29,65 @@ public class FollowMouseCircle : MonoBehaviour
         pz.z = 0;
         gameObject.transform.position = pz;
 
+        transform.localScale = Vector2.one * 2 * strengthMultiplier;
+
         List<FlockAgent> agents = flock.GetAgentsOfType("Leader", 1);
         foreach (FlockAgent agent in agents)
         {
             DrawPath(agent.transform.position + Vector3.forward, pz);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && strengthMultiplier <= 5)
+        {
+            strengthMultiplier += 2f * Time.deltaTime;
+
+            if (Input.GetMouseButton(0)){
+                spriteRenderer.color = new Color(0 / 255f, 125 / 255f, 255 / 255f, 72f / 255f);
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                spriteRenderer.color = new Color(255 / 255f, 125 / 255f, 0 / 255f, 72f / 255f);
+            }
+        }
+
+        if (strengthMultiplier > 1)
+        {
+            spriteRenderer.enabled = true;
+        }
+        else
+        {
+            spriteRenderer.enabled = false;
+        }
+        
+
+        if (Input.GetMouseButtonUp(0))
         {
             agents = flock.GetAgentsOfType("Leader", 1);
             foreach (FlockAgent agent in agents)
             {
                 Grenade grenade = Instantiate(grenadePrefab, agent.transform.position + Vector3.forward, Quaternion.identity);
-                grenade.strength = 2;
+                grenade.strength = 2f * strengthMultiplier;
                 Physics.gravity = Vector3.forward * gravity;
                 Rigidbody rigidbody = grenade.GetComponent<Rigidbody>();
                 rigidbody.velocity = CalculateLaunchData(rigidbody.position, pz).initialVelocity;
             }
+            strengthMultiplier = 1;
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonUp(1))
         {
             agents = flock.GetAgentsOfType("Leader", 1);
             foreach (FlockAgent agent in agents)
             {
                 Grenade grenade = Instantiate(grenadePrefab, agent.transform.position + Vector3.forward, Quaternion.identity);
-                grenade.strength = -2;
+                grenade.strength = -2f * strengthMultiplier;
                 Physics.gravity = Vector3.forward * gravity;
                 Rigidbody rigidbody = grenade.GetComponent<Rigidbody>();
                 rigidbody.velocity = CalculateLaunchData(rigidbody.position, pz).initialVelocity;
             }
+            strengthMultiplier = 1;
         }
+
     }
 
     void DrawPath(Vector3 startingPos, Vector3 target)

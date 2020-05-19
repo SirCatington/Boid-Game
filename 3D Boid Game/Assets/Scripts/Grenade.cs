@@ -7,7 +7,7 @@ public class Grenade : MonoBehaviour
 {
     Transform transform;
     public GrenadeExplosion explosionPrefab;
-    public int strength;
+    public float strength;
 
     private void Start()
     {
@@ -20,6 +20,7 @@ public class Grenade : MonoBehaviour
         {
             GrenadeExplosion explosion = Instantiate(explosionPrefab, transform.position + Vector3.forward * 2, Quaternion.identity);
             explosion.startingStrength = strength;
+            Debug.Log(strength);
             Destroy(gameObject);
         }
     }

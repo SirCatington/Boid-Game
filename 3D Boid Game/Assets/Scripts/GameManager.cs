@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public Text playButtonText;
     public Text verdictText;
     public Text boidNumberText;
+    public Text GameNameText;
 
     public enum GameState   
     {
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+        GameNameText.gameObject.SetActive(true);
         playButton.gameObject.SetActive(true);
         playButtonText.text = "Play";
         planets.SetActive(false);
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
                 if (flock.BoidNumber() == 0)
                 {
                     gameState = GameState.GameOver;
-
+                    GameNameText.gameObject.SetActive(true);
                     playButton.gameObject.SetActive(true);
                     planets.SetActive(false);
                     flock.gameObject.SetActive(false);
@@ -64,7 +65,7 @@ public class GameManager : MonoBehaviour
                 else if (!flock.playerAlive())
                 {
                     gameState = GameState.GameOver;
-
+                    GameNameText.gameObject.SetActive(true);
                     playButton.gameObject.SetActive(true);
                     planets.SetActive(false);
                     flock.gameObject.SetActive(false);
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlay()
     {
+        GameNameText.gameObject.SetActive(false);
         planets.SetActive(true);
         flock.gameObject.SetActive(true);
         target.SetActive(true);

@@ -28,7 +28,10 @@ public class GrenadeExplosion : MonoBehaviour
         if (decay < 1)
         {
             decay += decayRate * Time.deltaTime;
-            SetFromStrength((int)(startingStrength * (1 - decay)));
+            attractionForce = startingStrength * (1 - decay);
+            attractionRadius = Mathf.Abs(startingStrength) * 3 * (1 - decay);
+            transform.localScale = Vector3.one * Mathf.Abs(startingStrength) * (1 - decay);
+
         }
         else
         {
@@ -41,11 +44,11 @@ public class GrenadeExplosion : MonoBehaviour
     {
         if (strength > 0)
         {
-            GetComponent<Renderer>().material.SetColor("_Color", new Color(0 / 255f, 125 / 255f, 255 / 255f));  
+            GetComponent<Renderer>().material.SetColor("_Color", new Color(0 / 255f, 125 / 255f, 255 / 255f, 150f / 255f));  
         }
         else if (strength < 0)
         {
-            GetComponent<Renderer>().material.SetColor("_Color", new Color(255 / 255f, 125 / 255f, 0 / 255f));
+            GetComponent<Renderer>().material.SetColor("_Color", new Color(255 / 255f, 125 / 255f, 0f / 255f, 150f / 255f));
         }
     }
 
