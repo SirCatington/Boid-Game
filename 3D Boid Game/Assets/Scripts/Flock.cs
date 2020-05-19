@@ -6,8 +6,9 @@ public class Flock : MonoBehaviour
 {
     public FlockAgent agentPrefab;
     List<FlockAgent> agents;
-    public FlockBehaviour behaviour;
+    public CompositeBehaviour behaviour;
     public CameraController cameraController;
+    public bool gameEnd;
 
     [Range(10, 500)]
     public int startingCount = 250;
@@ -23,6 +24,7 @@ public class Flock : MonoBehaviour
     public float avoidanceRadiusMultiplier = 0.5f;
     [Range(1f, 10f)]
     public float leaderRadius = 5;
+    public int leaderCount = 5;
 
     float squareMaxSpeed;
     float squareNeighborRadius;
@@ -32,9 +34,11 @@ public class Flock : MonoBehaviour
     Color BaseBoidColor;
 
 
+
     // Start is called before the first frame update
     void OnEnable()
     {
+        gameEnd = false;
         agents = new List<FlockAgent>();
         BaseBoidColor = agentPrefab.GetComponentInChildren<Renderer>().sharedMaterial.color;
 
@@ -66,7 +70,9 @@ public class Flock : MonoBehaviour
     public int BoidNumber()
     {
         return agents.Count;
-    } 
+    }
+    
+    
 
     Color NewColor(int r, int g, int b)
     {
@@ -98,7 +104,7 @@ public class Flock : MonoBehaviour
         {
             List<Transform> context = GetNearbyObjects(agent);
             //agent.GetComponentInChildren<SpriteRenderer>().color = Color.Lerp(Color.white, Color.red, context.Count/6f);
-
+            
             Vector2 move = behaviour.CalculateMove(agent, context, this);
             move *= driveFactor;
             if (move.sqrMagnitude > squareMaxSpeed)
@@ -106,7 +112,7 @@ public class Flock : MonoBehaviour
                 move = move.normalized * maxSpeed;
             }
             agent.Move(move, context.Count);
-
+            
             if (agent.flockLeader == null)
             {
                 //agent.GetComponentInChildren<SpriteRenderer>().color = BaseBoidColor;
@@ -114,16 +120,22 @@ public class Flock : MonoBehaviour
             }
             else
             {
-                Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
+                //Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
                 //agent.GetComponentInChildren<SpriteRenderer>().color = Color.Lerp(agent.flockLeader.GetComponentInChildren<SpriteRenderer>().color, BaseBoidColor, (centerOffset.magnitude/5) - 1);
-                Renderer renderer = agent.GetComponentInChildren<Renderer>();
-                agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", Color.Lerp(agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color, BaseBoidColor, (centerOffset.magnitude / leaderRadius) - 1));
-
+                
+                //agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", Color.Lerp(agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color, BaseBoidColor, (centerOffset.magnitude / leaderRadius) - 1));
+                agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color);
             }
 
-            if (agent.flockLeader == agent && agent.isPlayer)
+            if (agent.flockLeader == agent && agent.isPlayer && !gameEnd)
             {
                 cameraController.MoveCameraTo(agent.transform.position);
+                behaviour.weights[5] = 2;
+            }
+            else if (gameEnd)
+            {
+                cameraController.MoveCameraTo(Vector3.zero);
+                behaviour.weights[5] = 0;
             }
         }
     }
@@ -132,23 +144,46 @@ public class Flock : MonoBehaviour
     {
         List<Transform> context = new List<Transform>();
         Collider2D[] contextColliders = Physics2D.OverlapCircleAll(agent.transform.position, neighborRadius);
+        int[] flockIds = new int[5];
+        int id = agent.flockId;
         foreach (Collider2D c in contextColliders)
         {
             if (c.tag == "Boid") {
-                if (c != agent.AgentCollider)
-                {
-                    FlockAgent targetAgent = c.gameObject.GetComponent<FlockAgent>();
-                    if (agent.flockLeader == null && targetAgent.flockLeader != null)
-                    {
-                        agent.flockLeader = targetAgent.flockLeader;
-                        agent.flockId = targetAgent.flockId;
+                FlockAgent targetAgent = c.gameObject.GetComponent<FlockAgent>();
 
-                    }
+                flockIds[targetAgent.flockId] += 1;
+
+                if (agent.flockLeader == null && targetAgent.flockLeader != null)
+                {
+                    agent.flockLeader = targetAgent.flockLeader;
+                    agent.flockId = targetAgent.flockId;
+
                 }
+                
             }
 
             context.Add(c.transform);
         }
+
+        id = System.Array.IndexOf(flockIds, Mathf.Max(flockIds));
+        List<FlockAgent> leaderAgent = GetAgentsOfType("Leader", id);
+        if (leaderAgent.Count != 0)
+        {
+            if (agent.type == "Leader" && id != agent.flockId)
+            {
+
+                ChooseSuccessor(agent);
+                agent.type = "Basic";
+                if (agent.isPlayer)
+                {
+                    agent.isPlayer = false;
+                }
+            }
+            agent.flockId = id;
+            agent.flockLeader = leaderAgent[0];
+            
+        }
+
         return context;
     }
 
@@ -161,7 +196,7 @@ public class Flock : MonoBehaviour
     {
         foreach (FlockAgent agent in agents)
         {
-            if (agent.isPlayer)
+            if (agent.flockId == 1)
             {
                 return true;
             }
@@ -169,35 +204,61 @@ public class Flock : MonoBehaviour
         return false;
     }
 
-    public void ChooseSuccessor(FlockAgent leaderAgent)
+    public bool OnlyFlockAlive(int id)
     {
-        FlockAgent newLeader = null;
         foreach (FlockAgent agent in agents)
         {
-            if (agent.flockLeader == leaderAgent)
+            if (agent.flockId != id)
             {
-                agent.flockLeader = agent;
-                newLeader = agent;
-                if (leaderAgent.isPlayer)
-                {
-                    agent.isPlayer = true;
-                }
-                break;
+                return false;
             }
         }
+        return true;
+    }
+
+    public void ChooseSuccessor(FlockAgent leaderAgent)
+    {
+        FlockAgent newLeader = GetAgentOfType("Basic", leaderAgent.flockId);
+        if (newLeader != null)
+        {
+            newLeader.flockLeader = newLeader;            
+            newLeader.type = "Leader";
+
+            if (leaderAgent.isPlayer)
+            {
+                newLeader.isPlayer = true;
+            }            
+        }
+        
+            
+       
         if (newLeader != null)
         {
             foreach (FlockAgent agent in agents)
             {
                 if (agent.flockLeader == leaderAgent)
                 {
-                    agent.flockLeader = newLeader;
-                    Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
-                    agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", Color.Lerp(agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color, BaseBoidColor, (centerOffset.magnitude / leaderRadius) - 1));
+                    agent.flockLeader = newLeader;                  
+                    
                 }
 
             }
         }
+    }
+
+    public FlockAgent GetAgentOfType(string type, int id)
+    {
+       
+        foreach (FlockAgent agent in agents)
+        {
+            if (agent.type == type && agent.flockId == id)
+            {
+                return agent;
+            }
+        }
+
+        return null;
+
     }
 
     public List<FlockAgent> GetAgentsOfType(string type, int id){

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Flock/Behaviour/Composite")]
-public class CompositeBehaviour : FlockBehaviour
+public class CompositeBehaviour : MonoBehaviour
 {
     public FlockBehaviour[] behaviors;
     public float[] weights;
 
     
 
-    public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
+    public Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
         //handle data mismatch
         if (weights.Length != behaviors.Length)

@@ -49,14 +49,13 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.Playing:
-                if (flock.BoidNumber() == 0)
+                if (flock.OnlyFlockAlive(1))
                 {
                     gameState = GameState.GameOver;
-                    GameNameText.gameObject.SetActive(true);
-                    playButton.gameObject.SetActive(true);
-                    planets.SetActive(false);
-                    flock.gameObject.SetActive(false);
                     target.SetActive(false);
+                    flock.gameEnd = true;
+                    GameNameText.gameObject.SetActive(true);
+                    playButton.gameObject.SetActive(true);                    
                     verdictText.gameObject.SetActive(true);
 
                     verdictText.text = "Amazing! You Won!";
@@ -67,8 +66,7 @@ public class GameManager : MonoBehaviour
                     gameState = GameState.GameOver;
                     GameNameText.gameObject.SetActive(true);
                     playButton.gameObject.SetActive(true);
-                    planets.SetActive(false);
-                    flock.gameObject.SetActive(false);
+                    flock.gameEnd = true;
                     target.SetActive(false);
                     verdictText.gameObject.SetActive(true);
 
@@ -83,7 +81,10 @@ public class GameManager : MonoBehaviour
 
     public void OnPlay()
     {
+
         GameNameText.gameObject.SetActive(false);
+        planets.SetActive(false);
+        flock.gameObject.SetActive(false);       
         planets.SetActive(true);
         flock.gameObject.SetActive(true);
         target.SetActive(true);

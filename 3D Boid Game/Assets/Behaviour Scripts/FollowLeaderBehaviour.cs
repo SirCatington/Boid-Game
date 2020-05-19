@@ -15,15 +15,19 @@ public class FollowLeaderBehaviour : FilteredFlockBehaviour
         {
             Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
             float t = centerOffset.magnitude / radius;
-            if (t > 2f)
+            //if (t > 2f)
+            //{
+            //    agent.flockLeader = null;
+            //    agent.flockId = 0;
+            //    return Vector2.zero;
+            //}
+            //else if (t < 1f)
+            //{                
+            //    t = 0.1f;
+            //}
+            if (t > 1f)
             {
-                agent.flockLeader = null;
-                agent.flockId = 0;
                 return Vector2.zero;
-            }
-            else if (t < 1f)
-            {                
-                t = 0.1f;
             }
             return centerOffset * Mathf.Sin(Mathf.PI * t);
         }

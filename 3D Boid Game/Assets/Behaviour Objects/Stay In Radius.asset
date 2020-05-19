@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filter: {fileID: 0}
   center: {x: 0, y: 0}
-  radius: 45
+  radius: 44

@@ -12,7 +12,7 @@ public class AlignWithLeaderBehaviour : FilteredFlockBehaviour
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
 
-        if (agent.flockId == 1)
+        if (agent.flockLeader != null)
         {
             Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
             float t = centerOffset.magnitude / radius;

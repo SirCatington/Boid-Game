@@ -66,6 +66,7 @@ public class FlockAgent : MonoBehaviour
     {
         if(flockLeader == this)
         {
+            Debug.Log("Chosing Successor");
             agentFlock.ChooseSuccessor(this);
         }
         agentFlock.RemoveBoid(this);
