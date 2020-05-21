@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
     {
         GameNameText.gameObject.SetActive(true);
         playButton.gameObject.SetActive(true);
-        verdictText.gameObject.SetActive(true);
+        verdictText.gameObject.SetActive(false);
         howToPlayButton.gameObject.SetActive(true);
         howToPlayText.gameObject.SetActive(false);
         BackButton.gameObject.SetActive(false);

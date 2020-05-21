@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Flock/Behaviour/Composite")]
 public class CompositeBehaviour : MonoBehaviour
 {
     public FlockBehaviour[] behaviors;

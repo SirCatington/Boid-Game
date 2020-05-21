@@ -10,10 +10,13 @@ public class FollowMouseCircle : MonoBehaviour
     public Flock flock;
     public Grenade grenadePrefab;
 
+    Vector3 playerPos;
+
     public float h = 25;
     public float gravity = -18;
+    public float range;
     float strengthMultiplier = 1;
-    
+    List<FlockAgent> agents;
 
     // Start is called before the first frame update
     void Start()
@@ -26,18 +29,38 @@ public class FollowMouseCircle : MonoBehaviour
     void Update()
     {
         Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+       
+        FlockAgent player = flock.GetAgentOfType("Leader", 1);
+        if (player != null)
+        {
+            playerPos = player.transform.position;
+        }
+        else
+        {
+            playerPos = Vector3.zero;
+        }
         pz.z = 0;
+
+        Vector3 newPz = pz - playerPos;
+        if (newPz.magnitude > range)
+        {
+            newPz.Normalize();
+            newPz *= range;
+            pz = newPz + playerPos;
+        }
+
+        DrawPath(playerPos + Vector3.forward, pz);
+       
+
         gameObject.transform.position = pz;
 
         transform.localScale = Vector2.one * 2 * strengthMultiplier;
 
-        List<FlockAgent> agents = flock.GetAgentsOfType("Leader", 1);
-        foreach (FlockAgent agent in agents)
-        {
-            DrawPath(agent.transform.position + Vector3.forward, pz);
-        }
-
         
+
+
+
         if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && strengthMultiplier <= 5)
         {
             strengthMultiplier += 2f * Time.deltaTime;
@@ -59,7 +82,7 @@ public class FollowMouseCircle : MonoBehaviour
         {
             spriteRenderer.enabled = false;
         }
-        
+
 
         if (Input.GetMouseButtonUp(0))
         {

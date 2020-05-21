@@ -237,7 +237,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &13187884
@@ -460,7 +460,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &139045826
 RectTransform:
   m_ObjectHideFlags: 0
@@ -513,8 +513,9 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "Controls:\nLeft Click to fire an attraction grenade\nRight Click to fire
-    a repulsion grenade\nHolding charges the grenade \n\nGoal:\nEliminate all enemy
-    boids by pushing or pulling them into the black holes in each corner of the map"
+    a repulsion grenade\nHolding charges the grenade \nScroll to zoom in and out\n\nGoal:\nEliminate
+    all enemy boids by pushing or pulling them into the black holes in each corner
+    of the map"
 --- !u!222 &139045828
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7171,7 +7172,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294795308}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0.4}
+  m_LocalPosition: {x: 0, y: 0, z: -0.2}
   m_LocalScale: {x: 30, y: 1, z: 30}
   m_Children: []
   m_Father: {fileID: 0}
@@ -12724,6 +12725,7 @@ MonoBehaviour:
     type: 3}
   h: 1
   gravity: -18
+  range: 30
 --- !u!212 &1858714016
 SpriteRenderer:
   m_ObjectHideFlags: 0
