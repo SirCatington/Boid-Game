@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        
+
         camera.orthographicSize -= Input.mouseScrollDelta.y * scale;
         if (camera.orthographicSize > 50)
         {
@@ -23,7 +23,7 @@ public class CameraController : MonoBehaviour
         {
             camera.orthographicSize = 1;
         }
-        
+
     }
 
     public void MoveCameraTo(Vector3 pos)

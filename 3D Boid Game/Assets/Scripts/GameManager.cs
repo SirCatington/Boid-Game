@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     public Text boidNumberText;
     public Text GameNameText;
 
+    public Text howToPlayText;
+    public Button howToPlayButton;
+    public Button BackButton;
+
     public enum GameState   
     {
         Start,             
@@ -33,6 +37,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        howToPlayButton.gameObject.SetActive(true);
+        howToPlayText.gameObject.SetActive(false);
+        BackButton.gameObject.SetActive(false);
+
         GameNameText.gameObject.SetActive(true);
         playButton.gameObject.SetActive(true);
         playButtonText.text = "Play";
@@ -73,9 +81,11 @@ public class GameManager : MonoBehaviour
                     verdictText.text = "Amazing! You Lost!";
                     playButtonText.text = "Play Again";
                 }
-                boidNumberText.text = string.Format("Boids: {0:D2}/{1:D2}", flock.BoidNumber(), flock.startingCount + 3);
+                boidNumberText.text = string.Format("Boids Remaining: {0:D2}", flock.NumOfBoidsRemaining());
 
                 break;
+            
+
         }
     }
 
@@ -91,7 +101,28 @@ public class GameManager : MonoBehaviour
         playButton.gameObject.SetActive(false);
         boidNumberText.gameObject.SetActive(true);
         verdictText.gameObject.SetActive(false);
+        howToPlayButton.gameObject.SetActive(false);
         gameState = GameState.Playing;
+    }
+
+    public void HowToPlayMenu()
+    {
+        GameNameText.gameObject.SetActive(true);
+        playButton.gameObject.SetActive(false);
+        howToPlayButton.gameObject.SetActive(false);
+        verdictText.gameObject.SetActive(false);
+        howToPlayText.gameObject.SetActive(true);
+        BackButton.gameObject.SetActive(true);
+    }
+
+    public void BackToMainMenu()
+    {
+        GameNameText.gameObject.SetActive(true);
+        playButton.gameObject.SetActive(true);
+        verdictText.gameObject.SetActive(true);
+        howToPlayButton.gameObject.SetActive(true);
+        howToPlayText.gameObject.SetActive(false);
+        BackButton.gameObject.SetActive(false);
     }
 
 }

@@ -92,5 +92,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f30883b42183e2418d5f6129bd973d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attractionRadius: 0
+  attractionForce: 0
   startingStrength: 0
   decayRate: 0.2
+  decay: 0

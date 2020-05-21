@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Flock : MonoBehaviour
 {
-    public FlockAgent agentPrefab;
+    public FlockAgent agentBasicPrefab;
+    public FlockAgent agentLeaderPrefab;
+    public FlockAgent agentBishopPrefab;
     List<FlockAgent> agents;
     public CompositeBehaviour behaviour;
     public CameraController cameraController;
     public bool gameEnd;
+    public Mesh leaderMesh;
 
     [Range(10, 500)]
     public int startingCount = 250;
@@ -38,30 +41,44 @@ public class Flock : MonoBehaviour
     // Start is called before the first frame update
     void OnEnable()
     {
+        
+
         gameEnd = false;
         agents = new List<FlockAgent>();
-        BaseBoidColor = agentPrefab.GetComponentInChildren<Renderer>().sharedMaterial.color;
+        BaseBoidColor = agentBasicPrefab.GetComponentInChildren<Renderer>().sharedMaterial.color;
 
         squareMaxSpeed = maxSpeed * maxSpeed;
         squareNeighborRadius = neighborRadius * neighborRadius;
         squareAvoidanceRadius = squareNeighborRadius * avoidanceRadiusMultiplier * avoidanceRadiusMultiplier;
 
-        for (int i = 0; i < startingCount - 1; i++)
-        {
-            FlockAgent newAgent = Instantiate(
-                agentPrefab,
-                Random.insideUnitCircle * startingCount * AgentDensity,
-                Quaternion.Euler(Vector3.forward * Random.Range(0f, 360f)),
-                transform
-                );
-            newAgent.name = "Agent " + i;
-            newAgent.Initialize(this, false, 0, "Basic");
-            agents.Add(newAgent);
-        }
-        InstantiateLeader(NewColor(249, 57, 67), true, 1);
-        InstantiateLeader(NewColor(252, 176, 179), false, 2);
-        InstantiateLeader(NewColor(126, 178, 221), false, 3);
-        InstantiateLeader(NewColor(68, 94, 147), false, 4);
+        InstantiateFlock(new Vector2(25, 0), NewColor(249, 57, 67), 1, 10, 1f, true);
+        InstantiateFlock(new Vector2(-25, 0), NewColor(252, 176, 179), 2, 10, 1f, true);
+        InstantiateFlock(new Vector2(0, -25), NewColor(126, 178, 221), 3, 10, 1f, true);
+        InstantiateFlock(new Vector2(0, 25), NewColor(68, 94, 147), 4, 10, 1f, true);
+        InstantiateFlock(new Vector2(15, 15), BaseBoidColor, 0, (startingCount - 40)/4, 2f, false);
+        InstantiateFlock(new Vector2(-15, 15), BaseBoidColor, 0, (startingCount - 40) / 4, 2f, false);
+        InstantiateFlock(new Vector2(15, -15), BaseBoidColor, 0, (startingCount - 40) / 4, 2f, false);
+        InstantiateFlock(new Vector2(-15, -15), BaseBoidColor, 0, (startingCount - 40) / 4 + (startingCount - 40) % 4, 2f, false);
+
+
+
+        //for (int i = 0; i < startingCount - 1; i++)
+        //{
+        //    FlockAgent newAgent = Instantiate(
+        //        agentBasicPrefab,
+        //        Random.insideUnitCircle * startingCount * AgentDensity,
+        //        Quaternion.Euler(Vector3.forward * Random.Range(0f, 360f)),
+        //        transform
+        //        );
+
+        //    newAgent.name = "Basic Agent " + i;
+        //    newAgent.Initialize(this, false, 0, "Basic");
+        //    agents.Add(newAgent);
+        //}
+        //InstantiateLeader(NewColor(249, 57, 67), true, 1);
+        //InstantiateLeader(NewColor(252, 176, 179), false, 2);
+        //InstantiateLeader(NewColor(126, 178, 221), false, 3);
+        //InstantiateLeader(NewColor(68, 94, 147), false, 4);
 
 
 
@@ -79,19 +96,38 @@ public class Flock : MonoBehaviour
         return new Color(r / 255f, g / 255f, b / 255f);
     }
 
-    void InstantiateLeader(Color leaderColor, bool isPlayer, int id)
+    void InstantiateFlock(Vector2 center, Color flockColor, int id, int spawnCount, float spawnRadius, bool leader)
+    {
+        for (int i = 0; i < spawnCount - 1; i++)
+        {
+            FlockAgent newAgent = Instantiate(
+                agentBasicPrefab,
+                Random.insideUnitCircle * spawnCount * spawnRadius + center,
+                Quaternion.Euler(Vector3.forward * Random.Range(0f, 360f)),
+                transform
+                );
+            newAgent.name = "Basic Agent ";
+            newAgent.Initialize(this, false, 0, "Basic");
+            agents.Add(newAgent);
+        }
+        bool player = id == 1 ? true : false;
+        if (leader)
+        {
+            InstantiateLeader(flockColor, player, id, center);
+        }
+    }
+
+    void InstantiateLeader(Color leaderColor, bool isPlayer, int id, Vector2 center)
     {
         FlockAgent leaderAgent = Instantiate(
-                agentPrefab,
-                Random.insideUnitCircle * startingCount * AgentDensity,
+                agentLeaderPrefab,
+                center,
                 Quaternion.Euler(Vector3.forward * Random.Range(0f, 360f)),
                 transform
                 );
 
 
         leaderAgent.GetComponentInChildren<Renderer>().material.SetColor("_Color", leaderColor);
-        leaderAgent.flockLeader = leaderAgent;
-
         leaderAgent.name = "Leader Agent " + id;
         leaderAgent.Initialize(this, isPlayer, id, "Leader");
         agents.Add(leaderAgent);
@@ -120,11 +156,11 @@ public class Flock : MonoBehaviour
             }
             else
             {
-                //Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
+                Vector2 centerOffset = (Vector2)agent.flockLeader.transform.position - (Vector2)agent.transform.position;
                 //agent.GetComponentInChildren<SpriteRenderer>().color = Color.Lerp(agent.flockLeader.GetComponentInChildren<SpriteRenderer>().color, BaseBoidColor, (centerOffset.magnitude/5) - 1);
                 
-                //agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", Color.Lerp(agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color, BaseBoidColor, (centerOffset.magnitude / leaderRadius) - 1));
-                agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color);
+                agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", Color.Lerp(agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color, BaseBoidColor, (centerOffset.magnitude / leaderRadius) - 1));
+                //agent.GetComponentInChildren<Renderer>().material.SetColor("_Color", agent.flockLeader.GetComponentInChildren<Renderer>().sharedMaterial.color);
             }
 
             if (agent.flockLeader == agent && agent.isPlayer && !gameEnd)
@@ -227,7 +263,9 @@ public class Flock : MonoBehaviour
             if (leaderAgent.isPlayer)
             {
                 newLeader.isPlayer = true;
-            }            
+            }
+            MeshFilter newLeaderMesh = newLeader.GetComponentInChildren<MeshFilter>();
+            newLeaderMesh.sharedMesh = leaderMesh;
         }
         
             
@@ -273,5 +311,18 @@ public class Flock : MonoBehaviour
         
         return filteredAgents;
         
+    }
+
+    public int NumOfBoidsRemaining()
+    {
+        int boidsRemaing = 0;
+        foreach (FlockAgent agent in agents)
+        {   
+            if (agent.flockId != 1)
+            {
+                boidsRemaing++;
+            }
+        }
+        return boidsRemaing;
     }
 }
